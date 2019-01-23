@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\libopenal.1.dylib" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\libSDL2-2.0.0.dylib" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll.config" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libopenal.so.1" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libSDL2-2.0.so.0" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\SDL2.dll" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x64\soft_oal.dll" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libopenal.so.1" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libSDL2-2.0.so.0" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll" t="Include" />
+    <e p="C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\x86\soft_oal.dll" t="Include" />
+    <e p="C:\Users\m224212\.Rider2018.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\m224212\.Rider2018.2\system\resharper-host\Local\Transient\ReSharperHost\v182\SolutionCaches\_VoxelWorldGL.927186397.00" t="ExcludeRecursive" />
+    <e p="C:\Users\m224212\source\repos\VoxelWorldGL" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="VoxelWorldGL" t="IncludeRecursive">
+        <e p="app.manifest" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="block" t="Include">
+          <e p="blocks" t="Include">
+            <e p="Block.cs" t="Include" />
+            <e p="BlockAir.cs" t="Include" />
+            <e p="BlockDirt.cs" t="Include" />
+            <e p="BlockStone.cs" t="Include" />
+            <e p="BlockWater.cs" t="Include" />
+          </e>
+          <e p="material" t="Include">
+            <e p="Material.cs" t="Include" />
+            <e p="MaterialAir.cs" t="Include" />
+            <e p="MaterialLiquid.cs" t="Include" />
+            <e p="MaterialSolid.cs" t="Include" />
+          </e>
+          <e p="renderer" t="Include">
+            <e p="BlockRenderer.cs" t="Include" />
+          </e>
+        </e>
+        <e p="client" t="Include">
+          <e p="renderer" t="Include">
+            <e p="Camera.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Content" t="Include">
+          <e p="Content.mgcb" t="Include" />
+        </e>
+        <e p="Icon.bmp" t="Include" />
+        <e p="Icon.ico" t="Include" />
+        <e p="item" t="Include">
+          <e p="Item.cs" t="Include" />
+          <e p="ItemBlock.cs" t="Include" />
+          <e p="ItemTool.cs" t="Include" />
+        </e>
+        <e p="LOTRVox.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="shaders" t="Include" />
+        <e p="VoxelWorldGL.csproj" t="IncludeRecursive" />
+        <e p="world" t="Include">
+          <e p="biome" t="Include">
+            <e p="Biome.cs" t="Include" />
+          </e>
+          <e p="chunk" t="Include">
+            <e p="Chunk.cs" t="Include" />
+            <e p="ChunkRenderer.cs" t="Include" />
+          </e>
+          <e p="NoiseGeneratorSimplex.cs" t="Include" />
+          <e p="World.cs" t="Include" />
+          <e p="WorldRenderer.cs" t="Include" />
+        </e>
+        <e p="x64" t="Include" />
+        <e p="x86" t="Include" />
+      </e>
+      <e p="VoxelWorldGL.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>
