@@ -12,10 +12,9 @@ namespace VoxelWorldGL.block.blocks
 {
 	class BlockWater : Block
 	{
-		public BlockWater(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Air)
+		public BlockWater(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Liquid)
 		{
 			RenderedFaces = new Faces(false);
-			Material = Material.Liquid;
 			Color = Color.Blue;
 		}
 	}

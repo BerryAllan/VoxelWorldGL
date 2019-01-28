@@ -113,8 +113,8 @@ namespace VoxelWorldGL
 	{
 		public static float BlockSize = 1f;
 		public static int ChunkSize = 16;
-		public static int WorldHeight = 256;
-		public static int RenderDistance = 8;
+		public static int WorldHeight = 512;
+		public static int RenderDistance = 4;
 		public static int GroundDisplacement = 16;
 		public static int SeaLevel = GroundDisplacement + 4;
 	}

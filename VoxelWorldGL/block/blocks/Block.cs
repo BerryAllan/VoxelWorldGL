@@ -30,7 +30,7 @@ namespace VoxelWorldGL.block.blocks
 			Material = material;
 		}
 
-		public void AssignBLockRenderer()
+		public void AssignBlockRenderer()
 		{
 			Renderer = new BlockRenderer(this);
 			Renderer.DefineVertices();

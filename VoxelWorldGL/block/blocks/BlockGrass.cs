@@ -10,12 +10,12 @@ using VoxelWorldGL.world.chunk;
 
 namespace VoxelWorldGL.block.blocks
 {
-	class BlockDirt : Block
+	class BlockGrass : Block
 	{
-		public BlockDirt(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Dirt)
+		public BlockGrass(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Dirt)
 		{
 			RenderedFaces = new Faces(true);
-			Color = Color.SaddleBrown;
+			Color = Color.ForestGreen;
 		}
 	}
 }

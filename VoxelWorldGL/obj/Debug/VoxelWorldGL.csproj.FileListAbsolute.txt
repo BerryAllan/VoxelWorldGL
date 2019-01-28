@@ -19,3 +19,5 @@ C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\obj\Debug\VoxelWorldGL.e
 C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\obj\Debug\VoxelWorldGL.pdb
 C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\bin\DesktopGL\AnyCPU\Debug\LibNoise.dll
 C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\bin\DesktopGL\AnyCPU\Debug\LibNoise.xml
+C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\bin\DesktopGL\AnyCPU\Debug\VoxelWorldGL.exe.config
+C:\Users\m224212\source\repos\VoxelWorldGL\VoxelWorldGL\bin\DesktopGL\AnyCPU\Debug\System.ValueTuple.dll

@@ -10,7 +10,8 @@ namespace VoxelWorldGL.client.renderer
 		public Matrix View { get; protected set; }
 		public Matrix Projection { get; protected set; }
 
-		public Vector3 CameraPosition { get; protected set; }
+		public Vector3 CameraPosition { get; private set; }
+		public Vector2 ChunkPosition { get; private set; }
 		private Vector3 _cameraDirection;
 		private Vector3 _cameraUp;
 
@@ -56,19 +57,25 @@ namespace VoxelWorldGL.client.renderer
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		public override void Update(GameTime gameTime)
 		{
-			// TODO: Add your update code here
+			// TODO: Why is the camera rotation f***ed
 			if (Game.IsActive)
 			{
 				// Move forward and backward
 				if (Keyboard.GetState().IsKeyDown(Keys.W))
-					CameraPosition += _cameraDirection * _moveSpeed;
+					CameraPosition += _cameraDirection * new Vector3(1, 0, 1) * _moveSpeed;
 				if (Keyboard.GetState().IsKeyDown(Keys.S))
-					CameraPosition -= _cameraDirection * _moveSpeed;
+					CameraPosition -= _cameraDirection * new Vector3(1, 0, 1) * _moveSpeed;
 
 				if (Keyboard.GetState().IsKeyDown(Keys.A))
-					CameraPosition += Vector3.Cross(_cameraUp, _cameraDirection) * _moveSpeed;
+					CameraPosition += Vector3.Cross(_cameraUp, _cameraDirection) * new Vector3(1, 0, 1) * _moveSpeed;
 				if (Keyboard.GetState().IsKeyDown(Keys.D))
-					CameraPosition -= Vector3.Cross(_cameraUp, _cameraDirection) * _moveSpeed;
+					CameraPosition -= Vector3.Cross(_cameraUp, _cameraDirection) * new Vector3(1, 0, 1) * _moveSpeed;
+
+				if(Keyboard.GetState().IsKeyDown(Keys.Space))
+					CameraPosition += Vector3.UnitY * _moveSpeed;
+
+				if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+					CameraPosition -= Vector3.UnitY * _moveSpeed;
 
 				// Rotation in the world
 				_cameraDirection = Vector3.Transform(_cameraDirection,
@@ -92,6 +99,15 @@ namespace VoxelWorldGL.client.renderer
 			CreateLookAt();
 
 			base.Update(gameTime);
+		}
+
+		public bool PositionChanged()
+		{
+			int x = (int) (CameraPosition.X / Settings.ChunkSize);
+			int y = (int) (CameraPosition.Z / Settings.ChunkSize);
+			if (x == (int) ChunkPosition.X && y == (int) ChunkPosition.Y) return false;
+			ChunkPosition = new Vector2(x, y);
+			return true;
 		}
 
 		private void CreateLookAt()

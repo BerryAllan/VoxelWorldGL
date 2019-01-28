@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,13 +16,12 @@ namespace VoxelWorldGL.world
 {
 	public class World
 	{
-		public ObservableCollection<Chunk> Chunks { get; set; }
+		public volatile ObservableCollection<Chunk> Chunks;
 		public WorldRenderer Renderer;
 		public readonly Game Game;
 		private readonly NoiseGeneratorSimplex _noiseGenerator;
-		private volatile bool _shouldChangeVerts = false;
-		private int counter = 0;
-		private static readonly object DeletionLock = new object();
+		private volatile bool _shouldChangeVerts;
+		private static readonly object ChunkGenLock = new object();
 
 		public World(LotrVox game)
 		{
@@ -32,9 +32,13 @@ namespace VoxelWorldGL.world
 
 		public void Initialize()
 		{
-			for (int i = 0; i < Settings.RenderDistance * Settings.ChunkSize; i += Settings.ChunkSize)
+			for (int i = -Settings.RenderDistance * Settings.ChunkSize;
+				i < Settings.RenderDistance * Settings.ChunkSize;
+				i += Settings.ChunkSize)
 			{
-				for (int j = 0; j < Settings.RenderDistance * Settings.ChunkSize; j += Settings.ChunkSize)
+				for (int j = -Settings.RenderDistance * Settings.ChunkSize;
+					j < Settings.RenderDistance * Settings.ChunkSize;
+					j += Settings.ChunkSize)
 				{
 					Chunk chunk = new Chunk(this, new Vector3(i, 0, j), _noiseGenerator);
 					chunk.AssignChunkRenderer();
@@ -43,21 +47,23 @@ namespace VoxelWorldGL.world
 			}
 
 			Renderer = new WorldRenderer(this, Game.GraphicsDevice);
-			//TODO: stop lag from chunk deletion
+			//TODO: stop lag from chunk adding and deleting
 			Chunks.CollectionChanged += (sender, args) =>
 			{
-				//I want it to crash if they're ain't any chunks
+				//I want it to crash if there ain't any chunks
 				/*if (Chunks.Count < 1)
-					return;*/
+				    return;*/
 				Task.Run(() =>
 				{
-					lock (DeletionLock)
+					lock (ChunkGenLock)
 					{
-						List<VertexPositionColor> newVerts = new List<VertexPositionColor>();
+						var newVerts = new List<VertexPositionColor>();
 						// ReSharper disable once ForCanBeConvertedToForeach; has to be for-loop
 						for (int i = 0; i < Chunks.Count; i++)
 							newVerts.AddRange(Chunks[i].Renderer.Vertices);
 						Renderer.Vertices = newVerts;
+
+						//Renderer.SetVertexData();
 						_shouldChangeVerts = true; //vertex changing needs to be done in the update method
 					}
 				});
@@ -67,26 +73,74 @@ namespace VoxelWorldGL.world
 		public void Update(GameTime gameTime)
 		{
 			Renderer.Camera.Update(gameTime);
-
-			//deletes chunks too far away from the player
-			for (int i = 0; i < Chunks.Count; i++)
-			{
-				if (Vector2.Distance(new Vector2(Renderer.Camera.CameraPosition.X, Renderer.Camera.CameraPosition.Z),
-					    new Vector2(Chunks[i].Position.X, Chunks[i].Position.Z)) >
-				    Settings.RenderDistance * Settings.ChunkSize)
-				{
-					Chunks.Remove(Chunks[i]);
-				}
-			}
-
-			//add chunks to empty spots around the player
-			
-
 			if (_shouldChangeVerts)
 			{
 				Renderer.SetVertexData();
 				_shouldChangeVerts = false;
 			}
+
+			//deletes chunks too far away from the player
+			Task.Run(() =>
+			{
+				lock (ChunkGenLock)
+				{
+					//TODO: make faster
+					for (int i = 0; i < Chunks.Count; i++)
+					{
+						if (Vector2.Distance(
+							    new Vector2(Renderer.Camera.CameraPosition.X, Renderer.Camera.CameraPosition.Z),
+							    new Vector2(Chunks[i].Position.X, Chunks[i].Position.Z)) / Settings.ChunkSize >
+						    Settings.RenderDistance / 2)
+						{
+							Chunks.Remove(Chunks[i]);
+						}
+					}
+					
+					//add chunks to empty spots around the player
+					for (int i = -Settings.RenderDistance * Settings.ChunkSize;
+						i < Settings.RenderDistance * Settings.ChunkSize;
+						i += Settings.ChunkSize)
+					{
+						for (int j = -Settings.RenderDistance * Settings.ChunkSize;
+							j < Settings.RenderDistance * Settings.ChunkSize;
+							j += Settings.ChunkSize)
+						{
+							int newX = (int) (i + ChunkPos(Renderer.Camera.CameraPosition).X);
+							int newZ = (int) (j + ChunkPos(Renderer.Camera.CameraPosition).Z);
+
+							bool hasChunk = false;
+							foreach (Chunk chunk in Chunks)
+							{
+								if ((int) chunk.Position.X == newX && (int) chunk.Position.Z == newZ)
+								{
+									hasChunk = true;
+									break;
+								}
+							}
+
+							if (!hasChunk)
+							{
+								Chunk chunk = new Chunk(this, new Vector3(newX, 0, newZ), _noiseGenerator);
+								chunk.AssignChunkRenderer();
+								Chunks.Add(chunk);
+							}
+						}
+					}
+				}
+			});
+		}
+
+		public Vector3 ChunkPos(Vector3 playerPos)
+		{
+			return new Vector3((float) Math.Floor(playerPos.X / (double) Settings.ChunkSize) * Settings.ChunkSize, 0,
+				(float) Math.Floor(playerPos.Z / (double) Settings.ChunkSize) * Settings.ChunkSize);
+		}
+
+		bool CheckRadius(int x, int y)
+		{
+			int vec2 = (int) Vector2.Subtract(new Vector2(x, y),
+				new Vector2(Renderer.Camera.CameraPosition.X, Renderer.Camera.CameraPosition.Z)).Length();
+			return vec2 < Settings.ChunkSize * Settings.RenderDistance;
 		}
 
 		public Block GetBlockAtPos(Vector3 pos)

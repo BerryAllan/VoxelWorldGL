@@ -15,7 +15,6 @@ namespace VoxelWorldGL.block.blocks
 		public BlockStone(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Stone)
 		{
 			RenderedFaces = new Faces(true);
-			Material = Material.Stone;
 			Color = Color.Gray;
 		}
 	}

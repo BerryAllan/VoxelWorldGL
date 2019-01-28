@@ -5,14 +5,14 @@ using VoxelWorldGL.block.blocks;
 
 namespace VoxelWorldGL.world.chunk
 {
-	public class Chunk
+	public class Chunk : IDisposable
 	{
 		public Block[,,] Blocks { get; } = new Block[Settings.ChunkSize, Settings.WorldHeight, Settings.ChunkSize];
 
 		public Vector3[,,] BlockPositions { get; } =
 			new Vector3[Settings.ChunkSize, Settings.WorldHeight, Settings.ChunkSize];
 
-		private readonly World _world;
+		public World World;
 		public Vector3 Position;
 		public ChunkRenderer Renderer;
 		public Vector3[,] TopBlockTerrain = new Vector3[Settings.ChunkSize, Settings.ChunkSize];
@@ -20,10 +20,9 @@ namespace VoxelWorldGL.world.chunk
 
 		public Chunk(World world, Vector3 position, NoiseGeneratorSimplex noiseGenerator)
 		{
-			_world = world;
+			World = world;
 			Position = position;
 			_noiseGenerator = noiseGenerator;
-			_world.Chunks.Add(this);
 			FillWithBlocks();
 		}
 
@@ -34,14 +33,15 @@ namespace VoxelWorldGL.world.chunk
 
 		private void FillWithBlocks()
 		{
-			
 			for (float x = 0, i = 0; i < Settings.ChunkSize; x += Settings.BlockSize, i++)
 			{
 				for (float z = 0, k = 0; k < Settings.ChunkSize; z += Settings.BlockSize, k++)
 				{
 					float posX = Position.X + x;
 					float posZ = Position.Z + z;
-					Vector3 topBlockPos = new Vector3(posX, (int) (_noiseGenerator.Get2DNoise((int) posX, (int) posZ) * 0.1 * Settings.WorldHeight + Settings.GroundDisplacement), posZ);
+					Vector3 topBlockPos = new Vector3(posX,
+						(int) (_noiseGenerator.Get2DNoise((int) posX, (int) posZ) * 0.1 * Settings.WorldHeight / 2 +
+						       Settings.GroundDisplacement), posZ);
 //					Debug.WriteLine((noiseGen.Get2DNoise((int)posX, (int)posZ) * Settings.WorldHeight));
 					TopBlockTerrain[(int) i, (int) k] = topBlockPos;
 				}
@@ -56,7 +56,8 @@ namespace VoxelWorldGL.world.chunk
 				}
 				Debug.Write("\n");
 			}*/
-
+			BlockAir blockAir = new BlockAir(new Vector3(0,0,0), new Vector3(0, 0, 0), this); //air doesn't need to be instantiated; it's invisible
+			//TODO: Replace this with biome specifics; use 2d noise for biome gen and height multipliers
 			for (float x = 0, i = 0; i < Settings.ChunkSize; x += Settings.BlockSize, i++)
 			{
 				for (float y = 0, j = 0; j < Settings.WorldHeight; y += Settings.BlockSize, j++)
@@ -69,11 +70,16 @@ namespace VoxelWorldGL.world.chunk
 						Vector3 blockWorldPos = new Vector3(posX, posY, posZ);
 						Vector3 blockChunkPos = new Vector3(x, y, z);
 						Block block;
-						if (y == TopBlockTerrain[(int) i, (int) k].Y)
+						if ((int) y == (int) TopBlockTerrain[(int) i, (int) k].Y)
+						{
+							block = new BlockGrass(blockWorldPos, blockChunkPos, this);
+						}
+						else if (y < TopBlockTerrain[(int) i, (int) k].Y &&
+						         y >= TopBlockTerrain[(int) i, (int) k].Y - 5)
 						{
 							block = new BlockDirt(blockWorldPos, blockChunkPos, this);
 						}
-						else if (y < TopBlockTerrain[(int) i, (int) k].Y)
+						else if (y < TopBlockTerrain[(int) i, (int) k].Y - 5)
 						{
 							block = new BlockStone(blockWorldPos, blockChunkPos, this);
 						}
@@ -82,7 +88,7 @@ namespace VoxelWorldGL.world.chunk
 							if (y < Settings.SeaLevel)
 								block = new BlockWater(blockWorldPos, blockChunkPos, this);
 							else
-								block = new BlockAir(blockWorldPos, blockChunkPos, this);
+								block = blockAir;
 						}
 
 						Blocks[(int) i, (int) j, (int) k] = block;
@@ -93,8 +99,14 @@ namespace VoxelWorldGL.world.chunk
 
 			foreach (Block b in Blocks)
 			{
-				b.AssignBLockRenderer();
+				b.AssignBlockRenderer();
 			}
+
+		}
+
+		public void Dispose()
+		{
+			Renderer.Vertices.Clear();
 		}
 	}
 }

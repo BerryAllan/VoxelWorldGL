@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace VoxelWorldGL.block.renderer
 	public class BlockRenderer
 	{
 		public readonly Block Block;
-		public List<VertexPositionColor> Vertices { get; } = new List<VertexPositionColor>();
+		public List<VertexPositionColor> Vertices { get; set; } = new List<VertexPositionColor>();
 
 		public BlockRenderer(Block block)
 		{
@@ -34,6 +35,8 @@ namespace VoxelWorldGL.block.renderer
 				Vertices.AddRange(Block.Renderer.UpFace(Block.WorldPos));
 			if (Block.RenderedFaces.Down)
 				Vertices.AddRange(Block.Renderer.DownFace(Block.WorldPos));
+
+			Vertices = Vertices.OrderBy(vertex => Vector3.Distance(vertex.Position, Vector3.Zero)).ToList();
 		}
 
 		public VertexPositionColor[] NorthFace(Vector3 pos)
@@ -42,11 +45,11 @@ namespace VoxelWorldGL.block.renderer
 			vertices[0] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y - 0.5f, pos.Z - 0.5f), Block.Color);
 			vertices[1] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y - 0.5f, pos.Z + 0.5f), Block.Color);
 			vertices[2] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, pos.Z - 0.5f), Block.Color);
-			vertices[3] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y - 0.5f, pos.Z + 0.5f), Block.Color);
-			vertices[4] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, pos.Z - 0.5f), Block.Color);
-			vertices[5] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, pos.Z + 0.5f), Block.Color);
+			//vertices[3] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y - 0.5f, pos.Z + 0.5f), Block.Color);
+			//vertices[4] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, pos.Z - 0.5f), Block.Color);
+			vertices[3] = new VertexPositionColor(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, pos.Z + 0.5f), Block.Color);
 
-			return vertices;
+			return  vertices;
 		}
 
 		public VertexPositionColor[] SouthFace(Vector3 pos)

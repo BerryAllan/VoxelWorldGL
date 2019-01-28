@@ -15,7 +15,6 @@ namespace VoxelWorldGL.block.blocks
 		public BlockAir(Vector3 worldPos, Vector3 chunkPos, Chunk chunk) : base(worldPos, chunkPos, chunk, Material.Air)
 		{
 			RenderedFaces = new Faces(false);
-			Material = Material.Air;
 			Color = Color.Transparent;
 		}
 	}
